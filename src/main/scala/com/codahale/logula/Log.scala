@@ -140,6 +140,16 @@ class Log(private val klass: Class[_], val logger: Logger) {
     log(Level.SEVERE, Some(thrown), message, params)
   }
 
+  /**
+   * Returns the log's current level.
+   */
+  def level = logger.getLevel
+
+  /**
+   * Sets the log's current level.
+   */
+  def level_=(level: Level) = logger.setLevel(level)
+
   private def log(level: Level, thrown: Option[Throwable], message: String, values: Seq[Any]) = if (logger.isLoggable(level)) {
     logger.log(buildRecord(level, message, thrown, values))
   }
