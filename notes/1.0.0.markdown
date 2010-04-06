@@ -1,0 +1,5 @@
+Initial release:
+
+* works
+* doesn't explode
+* may turn into a bat
