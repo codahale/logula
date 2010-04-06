@@ -12,14 +12,6 @@ object Logging {
    * specific logger levels.
    */
   def configure(default: Level, levels: (String, Level)*) {
-    configure(default, levels.toMap)
-  }
-
-  /**
-   * Enables Logula's formatter, sets the default level, and sets any provided
-   * specific logger levels.
-   */
-  def configure(default: Level, levels: Map[String, Level]) {
     resetHandlers()
     addOwnHandler(default)
     setLevels(levels.toMap)
