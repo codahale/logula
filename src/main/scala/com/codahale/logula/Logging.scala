@@ -28,7 +28,7 @@ object Logging {
     root.setLevel(default)
     val handler = new ConsoleHandler
     handler.setFormatter(new Formatter)
-    handler.setLevel(default)
+    handler.setLevel(Level.ALL)
     root.addHandler(handler)
   }
 
