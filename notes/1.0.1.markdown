@@ -1,0 +1,3 @@
+Compatibility release:
+
+* Now cross-compiled against Scala 2.8.0.RC2.
