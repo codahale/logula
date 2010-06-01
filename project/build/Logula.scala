@@ -1,4 +1,4 @@
-class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with posterous.Publish {
+class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with posterous.Publish with rsync.RsyncPublishing {
   /**
    * Publish the source as well as the class files.
    */
@@ -7,16 +7,9 @@ class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with poster
   override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
 
   /**
-   * Publish to a local temp repo, then rsync the files over to repo.codahale.com.
+   * Publish via rsync.
    */
-  override def managedStyle = sbt.ManagedStyle.Maven
-  val publishTo = sbt.Resolver.file("Local Cache", ("." / "target" / "repo").asFile)
-  def publishToLocalRepoAction = super.publishAction
-  override def publishAction = task {
-    log.info("Uploading to repo.codahale.com")
-    sbt.Process("rsync", "-avz" :: "target/repo/" :: "codahale.com:/home/codahale/repo.codahale.com" :: Nil) ! log
-    None
-  } describedAs("Publish binary and source JARs to repo.codahale.com") dependsOn(test, publishToLocalRepoAction)
+  def rsyncRepo = "codahale.com:/home/codahale/repo.codahale.com"
 
   /**
    * Dependencies
@@ -25,6 +18,7 @@ class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with poster
   val scalaTest = buildScalaVersion match {
     case "2.8.0.Beta1" => "org.scalatest" % "scalatest" % "1.0.1-for-scala-2.8.0.Beta1-with-test-interfaces-0.3-SNAPSHOT" % "test" withSources() intransitive()
     case "2.8.0.RC2" => "org.scalatest" % "scalatest" % "1.2-for-scala-2.8.0.RC2-SNAPSHOT" % "test" withSources() intransitive()
+    case "2.8.0.RC3" => "org.scalatest" % "scalatest" % "1.2-for-scala-2.8.0.RC3-SNAPSHOT" % "test" withSources() intransitive()
     case unknown => error("no known scalatest impl for %s".format(unknown))
   }
   val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test" withSources()
