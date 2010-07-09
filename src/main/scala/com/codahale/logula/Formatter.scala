@@ -47,7 +47,7 @@ class Formatter extends JdkFormatter {
     val output = new StringWriter
     e.printStackTrace(new PrintWriter(output))
     buffer.append("! ")
-    buffer.append(output.toString.replaceAll("\n", "\n! "))
+    buffer.append(output.toString.replaceAll("\n", "\n! ").replaceAll("\t", "  "))
   }
 
   private def logTimestamp(millis: Long, buffer: StringBuffer) {
