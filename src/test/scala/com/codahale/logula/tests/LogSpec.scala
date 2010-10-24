@@ -223,7 +223,7 @@ object LogSpec extends Spec with Mockito {
       logger.isEnabledFor(level) returns true
     }
     
-    val example = new LogExample(new Log(classOf[LogExample], logger))
+    val example = new LogExample(new Log(logger))
     (logger, example)
   }
 }

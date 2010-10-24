@@ -10,13 +10,13 @@ object Log {
    * Returns a log for a given class.
    */
   def forClass[A](implicit mf: Manifest[A]): Log = {
-    new Log(mf.erasure, Logger.getLogger(mf.erasure))
+    new Log(Logger.getLogger(mf.erasure))
   }
 
   /**
    * Returns a log for a given class.
    */
-  def forClass(klass: Class[_]) = new Log(klass, Logger.getLogger(klass))
+  def forClass(klass: Class[_]) = new Log(Logger.getLogger(klass))
 
   protected val CallerFQCN = classOf[Log].getCanonicalName
 }
@@ -36,7 +36,7 @@ object Log {
  *
  * @author coda
  */
-class Log(private val klass: Class[_], val logger: Logger) {
+class Log(private val logger: Logger) {
   import Log._
   
   /**
