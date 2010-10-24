@@ -141,6 +141,18 @@ class Log(private val klass: Class[_], val logger: Logger) {
    */
   def level_=(level: Level) = logger.setLevel(level)
 
+  def isTraceEnabled = logger.isEnabledFor(Level.TRACE)
+
+  def isDebugEnabled = logger.isEnabledFor(Level.DEBUG)
+
+  def isInfoEnabled = logger.isEnabledFor(Level.INFO)
+
+  def isWarnEnabled = logger.isEnabledFor(Level.WARN)
+
+  def isErrorEnabled = logger.isEnabledFor(Level.ERROR)
+
+  def isFatalEnabled = logger.isEnabledFor(Level.FATAL)
+
   private def log(level: Level, thrown: Option[Throwable], message: String, values: Seq[Any]) = {
     if (logger.isEnabledFor(level)) {
       logger.log(CallerFQCN, level, message.format(values: _*), thrown.orNull)
