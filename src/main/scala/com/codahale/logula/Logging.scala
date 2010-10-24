@@ -22,7 +22,6 @@ object Logging {
    * provided specific logger levels, if any.
    */
   def logToConsole(default: Level, levels: (String, Level)*) {
-    reset()
     val root = Logger.getRootLogger()
     root.setLevel(default)
 
@@ -44,8 +43,6 @@ object Logging {
   def logToFile(default: Level,
                 filenamePattern: String,
                 levels: (String, Level)*) {
-    reset()
-
     val root = Logger.getRootLogger()
     root.setLevel(default)
     val formatter = new Formatter
@@ -81,15 +78,18 @@ object Logging {
     }
   }
 
+  /**
+   * Resets all existing logging configuration.
+   */
+  def reset() {
+    val root = Logger.getRootLogger()
+    root.getLoggerRepository.resetConfiguration()
+  }
+
   private def setLevels(levels: Seq[(String, Level)]) {
     for ((name, level) <- levels) {
       Logger.getLogger(name).setLevel(level)
     }
-  }
-
-  private def reset() {
-    val root = Logger.getRootLogger()
-    root.getLoggerRepository.resetConfiguration()
   }
 }
 
