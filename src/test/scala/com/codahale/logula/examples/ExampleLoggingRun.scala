@@ -35,7 +35,20 @@ object ExampleLoggingRun extends Logging {
   def main(args: Array[String]) {
     Logging.logToConsole(Level.ALL,
       "com.codahale.logula.examples.SilencedRunner" -> Level.OFF)
+
+    Logging.redirectStdErr(Level.ERROR)
+    Logging.redirectStdOut(Level.INFO)
+
+    println("stdout woo ")
+    System.err.print("one ")
+    System.err.print("two ")
+    System.err.flush()
+    System.err.println("three!")
+
     new ThingDoer().run()
     new SilencedRunner().run()
+
+    Logging.restoreStdErr()
+    Logging.restoreStdOut()
   }
 }

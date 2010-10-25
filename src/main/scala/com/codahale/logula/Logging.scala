@@ -4,6 +4,7 @@ import org.apache.log4j.rolling.{TimeBasedRollingPolicy, RollingFileAppender}
 import management.ManagementFactory
 import javax.management.{InstanceAlreadyExistsException, ObjectName}
 import org.apache.log4j.{Level, Logger, ConsoleAppender, AsyncAppender}
+import java.io.PrintStream
 
 /**
  * A singleton class for configuring logging in a JVM process.
@@ -84,6 +85,47 @@ object Logging {
   def reset() {
     val root = Logger.getRootLogger()
     root.getLoggerRepository.resetConfiguration()
+  }
+
+  private var originalStdOut: Option[PrintStream] = None
+  private var originalStdErr: Option[PrintStream] = None
+
+  def redirectStdOut(level: Level) = synchronized {
+    if (originalStdOut.isEmpty) {
+      originalStdOut = Some(System.out)
+      System.setOut(
+        new PrintStream(
+          new LoggerOutputStream(Logger.getLogger("system.stdout"), level),
+          true
+        )
+      )
+    }
+  }
+
+  def restoreStdOut() = synchronized {
+    originalStdOut.foreach { out =>
+      System.setOut(out)
+      originalStdOut = None
+    }
+  }
+
+  def redirectStdErr(level: Level) = synchronized {
+    if (originalStdErr.isEmpty) {
+      originalStdErr = Some(System.err)
+      System.setErr(
+        new PrintStream(
+          new LoggerOutputStream(Logger.getLogger("system.stderr"), level),
+          true
+        )
+      )
+    }
+  }
+
+  def restoreStdErr() = synchronized {
+    originalStdErr.foreach{ err =>
+        System.setErr(err)
+        originalStdErr = None
+    }
   }
 
   private def setLevels(levels: Seq[(String, Level)]) {
