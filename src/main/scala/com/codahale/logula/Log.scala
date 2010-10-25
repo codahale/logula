@@ -1,6 +1,6 @@
 package com.codahale.logula
 
-import java.util.logging.{LogRecord, Level, Logger}
+import org.apache.log4j.{Level, Logger}
 
 /**
  * Log's companion object.
@@ -9,90 +9,64 @@ object Log {
   /**
    * Returns a log for a given class.
    */
-  def forClass(klass: Class[_]) = new Log(klass, Logger.getLogger(klass.getCanonicalName))
+  def forClass[A](implicit mf: Manifest[A]): Log = {
+    new Log(Logger.getLogger(mf.erasure))
+  }
 
-  protected val IgnoredFiles = Set("Log.scala")
-  protected val IgnoredMethods = classOf[Log].getMethods.map { _.getName }.toSet
+  /**
+   * Returns a log for a given class.
+   */
+  def forClass(klass: Class[_]) = new Log(Logger.getLogger(klass))
+
+  protected val CallerFQCN = classOf[Log].getCanonicalName
 }
 
 /**
  * In general, use the Logging trait rather than using Log directly.
  *
- * A wrapper for java.util.logging.Logger which allows for a smoother
- * interaction with Scala classes. All messages are treated as format strings:
+ * A wrapper for org.apache.log4j which allows for a smoother interaction with
+ * Scala classes. All messages are treated as format strings:
  *
  *    log.info("We have this many threads: %d", thread.size)
  *
  * Each log level has two methods: one for logging regular messages, the other
  * for logging messages with thrown exceptions.
  *
- * The log levels here are those of java.util.logging.Level, and while they are
- * slightly insane (CONFIG? really?) I'd rather preserve the mapping than try
- * to figure out what other library authors mean when they use a particular
- * level (or use slf4j's mappings, which further muddy the waters).
+ * The log levels here are those of org.apache.log4j.
  *
  * @author coda
  */
-class Log(private val klass: Class[_], val logger: Logger) {
+class Log(private val logger: Logger) {
+  import Log._
   
   /**
-   * Logs a message with optional parameters at level FINEST.
+   * Logs a message with optional parameters at level TRACE.
    */
-  def finest(message: String, params: Any*) {
-    log(Level.FINEST, None, message, params)
+  def trace(message: String, params: Any*) {
+    log(Level.TRACE, None, message, params)
   }
 
   /**
    * Logs a thrown exception and a message with optional parameters at level
-   * FINEST.
+   * TRACE.
    */
-  def finest(thrown: Throwable, message: String, params: Any*) {
-    log(Level.FINEST, Some(thrown), message, params)
+  def trace(thrown: Throwable, message: String, params: Any*) {
+    log(Level.TRACE, Some(thrown), message, params)
   }
 
   /**
-   * Logs a message with optional parameters at level FINER.
+   * Logs a message with optional parameters at level DEBUG.
    */
-  def finer(message: String, params: Any*) {
-    log(Level.FINER, None, message, params)
-  }
-
-  /**
-   * Logs a thrown exception and a message with optional parameters at level
-   * FINER.
-   */
-  def finer(thrown: Throwable, message: String, params: Any*) {
-    log(Level.FINER, Some(thrown), message, params)
-  }
-
-  /**
-   * Logs a message with optional parameters at level FINE.
-   */
-  def fine(message: String, params: Any*) {
-    log(Level.FINE, None, message, params)
+  def debug(message: String, params: Any*) {
+    log(Level.DEBUG, None, message, params)
   }
 
   /**
    * Logs a thrown exception and a message with optional parameters at level
-   * FINE.
+   * DEBUG.
    */
-  def fine(thrown: Throwable, message: String, params: Any*) {
-    log(Level.FINE, Some(thrown), message, params)
-  }
-
-  /**
-   * Logs a message with optional parameters at level CONFIG.
-   */
-  def config(message: String, params: Any*) {
-    log(Level.CONFIG, None, message, params)
-  }
-
-  /**
-   * Logs a thrown exception and a message with optional parameters at level
-   * CONFIG.
-   */
-  def config(thrown: Throwable, message: String, params: Any*) {
-    log(Level.CONFIG, Some(thrown), message, params)
+  def debug(thrown: Throwable, message: String, params: Any*) {
+    log(Level.DEBUG, Some(thrown), message, params)
   }
 
   /**
@@ -111,33 +85,50 @@ class Log(private val klass: Class[_], val logger: Logger) {
   }
 
   /**
-   * Logs a message with optional parameters at level WARNING.
+   * Logs a message with optional parameters at level WARN.
    */
-  def warning(message: String, params: Any*) {
-    log(Level.WARNING, None, message, params)
+  def warn(message: String, params: Any*) {
+    log(Level.WARN, None, message, params)
   }
 
   /**
    * Logs a thrown exception and a message with optional parameters at level
-   * WARNING.
+   * WARN.
    */
-  def warning(thrown: Throwable, message: String, params: Any*) {
-    log(Level.WARNING, Some(thrown), message, params)
+  def warn(thrown: Throwable, message: String, params: Any*) {
+    log(Level.WARN, Some(thrown), message, params)
   }
 
   /**
-   * Logs a message with optional parameters at level SEVERE.
+   * Logs a message with optional parameters at level ERROR.
    */
-  def severe(message: String, params: Any*) {
-    log(Level.SEVERE, None, message, params)
+  def error(message: String, params: Any*) {
+    log(Level.ERROR, None, message, params)
   }
 
   /**
    * Logs a thrown exception and a message with optional parameters at level
-   * SEVERE.
+   * ERROR.
    */
-  def severe(thrown: Throwable, message: String, params: Any*) {
-    log(Level.SEVERE, Some(thrown), message, params)
+  def error(thrown: Throwable, message: String, params: Any*) {
+    log(Level.ERROR, Some(thrown), message, params)
+  }
+
+  /**
+   * Logs a message with optional parameters at level FATAL.
+   */
+
+  def fatal(message: String, params: Any*) {
+    log(Level.FATAL, None, message, params)
+  }
+
+  /**
+   * Logs a thrown exception and a message with optional parameters at level
+   * FATAL.
+   */
+
+  def fatal(thrown: Throwable, message: String, params: Any*) {
+    log(Level.FATAL, Some(thrown), message, params)
   }
 
   /**
@@ -150,18 +141,21 @@ class Log(private val klass: Class[_], val logger: Logger) {
    */
   def level_=(level: Level) = logger.setLevel(level)
 
-  private def log(level: Level, thrown: Option[Throwable], message: String, values: Seq[Any]) = if (logger.isLoggable(level)) {
-    logger.log(buildRecord(level, message, thrown, values))
-  }
+  def isTraceEnabled = logger.isEnabledFor(Level.TRACE)
 
-  private def buildRecord(level: Level, message: String, exception: Option[Throwable], values: Seq[Any]) = {
-    val record = new LogRecord(level, message.format(values:_*))
-    record.setSourceClassName(klass.getCanonicalName)
-    val stack = (new Throwable()).getStackTrace.dropWhile { f =>
-      Log.IgnoredFiles.contains(f.getFileName) || Log.IgnoredMethods.contains(f.getMethodName)
-    }.head
-    record.setSourceMethodName(stack.getMethodName)
-    exception.map { record.setThrown(_) }
-    record
+  def isDebugEnabled = logger.isEnabledFor(Level.DEBUG)
+
+  def isInfoEnabled = logger.isEnabledFor(Level.INFO)
+
+  def isWarnEnabled = logger.isEnabledFor(Level.WARN)
+
+  def isErrorEnabled = logger.isEnabledFor(Level.ERROR)
+
+  def isFatalEnabled = logger.isEnabledFor(Level.FATAL)
+
+  private def log(level: Level, thrown: Option[Throwable], message: String, values: Seq[Any]) = {
+    if (logger.isEnabledFor(level)) {
+      logger.log(CallerFQCN, level, message.format(values: _*), thrown.orNull)
+    }
   }
 }

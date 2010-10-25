@@ -1,49 +1,96 @@
 package com.codahale.logula
 
-import collection.JavaConversions.asIterator
-import java.util.logging.{ConsoleHandler, Logger, LogManager, Level}
+import org.apache.log4j.rolling.{TimeBasedRollingPolicy, RollingFileAppender}
+import management.ManagementFactory
+import javax.management.{InstanceAlreadyExistsException, ObjectName}
+import org.apache.log4j.{Level, Logger, ConsoleAppender, AsyncAppender}
 
 /**
  * A singleton class for configuring logging in a JVM process.
  */
 object Logging {
   /**
-   * Enables Logula's formatter, sets the default level, and sets any provided
-   * specific logger levels.
+   * Disables all logging output. (Useful for unit tests.)
    */
-  def configure(default: Level, levels: (String, Level)*) {
-    resetHandlers()
-    addOwnHandler(default)
-    setLevels(levels.toMap)
+  def silence() {
+    reset()
+    logToConsole(Level.OFF)
   }
 
-  private def setLevels(levels: Map[String, Level]) {
+  /**
+   * Logs all output at or above the specified level to STDOUT and sets the
+   * provided specific logger levels, if any.
+   */
+  def logToConsole(default: Level, levels: (String, Level)*) {
+    val root = Logger.getRootLogger()
+    root.setLevel(default)
+
+    val formatter = new Formatter
+
+    val appender = new AsyncAppender
+    appender.addAppender(new ConsoleAppender(formatter))
+    root.addAppender(appender)
+
+    setLevels(levels)
+  }
+
+  /**
+   * Logs all output at or above the specified level to the specified file and
+   * sets the provided specific logger levels, if any.
+   *
+   * See {@link org.apache.log4j.rolling.TimeBasedRollingPolicy} for details.
+   */
+  def logToFile(default: Level,
+                filenamePattern: String,
+                levels: (String, Level)*) {
+    val root = Logger.getRootLogger()
+    root.setLevel(default)
+    val formatter = new Formatter
+
+    val policy = new TimeBasedRollingPolicy
+    policy.setFileNamePattern(filenamePattern)
+    policy.activateOptions()
+
+    val rollingLog = new RollingFileAppender()
+    rollingLog.setLayout(formatter)
+    rollingLog.setRollingPolicy(policy)
+    rollingLog.activateOptions()
+    rollingLog.setThreshold(Level.ALL)
+
+    val appender = new AsyncAppender
+    appender.addAppender(rollingLog)
+    root.addAppender(appender)
+
+    setLevels(levels)
+  }
+
+  /**
+   * Registers a JMX MBean which allows you to set logger levels at runtime via
+   * JXM.
+   */
+  def registerWithJMX() {
+    try {
+      val mbeans = ManagementFactory.getPlatformMBeanServer
+      val name = new ObjectName("com.codahale.logula:type=Logging")
+      mbeans.registerMBean(LoggingMXBean, name)
+    } catch {
+      case e: InstanceAlreadyExistsException => // THANKS
+    }
+  }
+
+  /**
+   * Resets all existing logging configuration.
+   */
+  def reset() {
+    val root = Logger.getRootLogger()
+    root.getLoggerRepository.resetConfiguration()
+  }
+
+  private def setLevels(levels: Seq[(String, Level)]) {
     for ((name, level) <- levels) {
       Logger.getLogger(name).setLevel(level)
     }
   }
-
-  private def addOwnHandler(default: Level) {
-    val root = Logger.getLogger("")
-    root.setLevel(default)
-    val handler = new ConsoleHandler
-    handler.setFormatter(new Formatter)
-    handler.setLevel(Level.ALL)
-    root.addHandler(handler)
-  }
-
-  private def resetHandlers() {
-    for (name <- loggerNames) {
-      val logger = Logger.getLogger(name)
-      for (handler <- logger.getHandlers) {
-        handler.close()
-        logger.removeHandler(handler)
-      }
-    }
-  }
-
-  private def loggerNames =
-    asIterator(LogManager.getLogManager.getLoggerNames).filter { _ != null }
 }
 
 /**
