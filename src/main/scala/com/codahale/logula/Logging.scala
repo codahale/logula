@@ -4,11 +4,23 @@ import org.apache.log4j.rolling.{TimeBasedRollingPolicy, RollingFileAppender}
 import management.ManagementFactory
 import javax.management.{InstanceAlreadyExistsException, ObjectName}
 import org.apache.log4j.{Level, Logger, ConsoleAppender, AsyncAppender}
+import java.util.concurrent.{ThreadFactory, TimeUnit, Executors}
 
 /**
  * A singleton class for configuring logging in a JVM process.
  */
 object Logging {
+  private val e = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+    def newThread(r: Runnable) = {
+      val t = new Thread() {
+        override def run() = r.run()
+      }
+      t.setDaemon(true)
+      t.setName("Logula-GCMonitor")
+      t
+    }
+  })
+
   /**
    * Disables all logging output. (Useful for unit tests.)
    */
@@ -76,6 +88,11 @@ object Logging {
     } catch {
       case e: InstanceAlreadyExistsException => // THANKS
     }
+  }
+  
+  def logGCActivity(intervalInMS: Long, durations: (Level, Long)*) {
+    val logger = Logger.getLogger("GC")
+    e.scheduleAtFixedRate(new GCMonitor(logger, durations), 0, intervalInMS, TimeUnit.MILLISECONDS)
   }
 
   /**
