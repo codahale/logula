@@ -35,7 +35,17 @@ object ExampleLoggingRun extends Logging {
   def main(args: Array[String]) {
     Logging.logToConsole(Level.ALL,
       "com.codahale.logula.examples.SilencedRunner" -> Level.OFF)
+    Logging.logGCActivity(10,
+      Level.DEBUG -> 0,
+      Level.INFO -> 100,
+      Level.WARN -> 300
+    )
     new ThingDoer().run()
     new SilencedRunner().run()
+
+    log.info("Generating some garbage")
+    for (i <- 1 to 10000) {
+      (1 to i).toList.toSet.toList
+    }
   }
 }
