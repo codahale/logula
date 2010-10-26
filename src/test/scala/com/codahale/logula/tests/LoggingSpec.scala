@@ -16,22 +16,4 @@ object LoggingSpec extends Spec {
       example.getLog must haveClass[Log]
     }
   }
-
-  class `Configuring logging` {
-    try {
-      Logging.logToConsole(Level.WARN, "com.codahale" -> Level.ALL)
-    } catch {
-      case e =>
-        e.printStackTrace()
-        throw e
-    }
-
-    def `should set the root logger level to the default level` {
-      Logger.getRootLogger.getLevel must be(Level.WARN)
-    }
-
-    def `should set specific loggers to specific levels` {
-      Logger.getLogger("com.codahale").getLevel must be(Level.ALL)
-    }
-  }
 }

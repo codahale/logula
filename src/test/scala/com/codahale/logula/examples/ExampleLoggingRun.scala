@@ -2,6 +2,7 @@ package com.codahale.logula.examples
 
 import com.codahale.logula.Logging
 import org.apache.log4j.Level
+import java.util.concurrent.TimeUnit
 
 class ThingDoer extends Logging {
   def run() {
@@ -33,13 +34,25 @@ class SilencedRunner extends Logging {
 
 object ExampleLoggingRun extends Logging {
   def main(args: Array[String]) {
-    Logging.logToConsole(Level.ALL,
-      "com.codahale.logula.examples.SilencedRunner" -> Level.OFF)
-    Logging.logGCActivity(10,
-      Level.DEBUG -> 0,
-      Level.INFO -> 100,
-      Level.WARN -> 300
-    )
+    Logging.configure { log =>
+      log.registerWithJMX = true
+
+      log.loggers("com.codahale.logula.examples.SilencedRunner") = Level.OFF
+
+      log.console.enabled = true
+      log.console.level = Level.ALL
+
+      log.file.enabled = true
+      log.file.filenamePattern = "./logs/%d{yyyy-MM-dd}.log.gz"
+      log.file.level = Level.INFO
+
+      log.gc.enabled = true
+      log.gc.checkEvery(1, TimeUnit.SECONDS)
+      log.gc.addDurationThreshold(Level.DEBUG,    0, TimeUnit.MILLISECONDS)
+      log.gc.addDurationThreshold(Level.INFO,   300, TimeUnit.MILLISECONDS)
+      log.gc.addDurationThreshold(Level.WARN,  1000, TimeUnit.MILLISECONDS)
+    }
+
     new ThingDoer().run()
     new SilencedRunner().run()
 
