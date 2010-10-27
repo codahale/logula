@@ -64,7 +64,7 @@ object Logging {
     /**
      * The minimum logging level which will be written to console.
      */
-    var level = Level.INFO
+    var threshold = Level.ALL
   }
 
   class LoggingFileConfig {
@@ -77,7 +77,7 @@ object Logging {
     /**
      * The minimum logging level which will be written to the file.
      */
-    var level = Level.INFO
+    var threshold = Level.ALL
 
     /**
      * The log filename pattern.
@@ -113,6 +113,11 @@ object Logging {
      * dynamically modify logger levels. Defaults to {@code true}.
      */
     var registerWithJMX = true
+
+    /**
+     * The default level for all loggers.
+     */
+    var level = Level.INFO
   }
 
   /**
@@ -124,6 +129,7 @@ object Logging {
 
     val root = Logger.getRootLogger
     root.getLoggerRepository.resetConfiguration()
+    root.setLevel(config.level)
 
     for ((name, level) <- config.loggers) {
       Logger.getLogger(name).setLevel(level)
@@ -132,7 +138,7 @@ object Logging {
     if (config.console.enabled) {
       val appender = new AsyncAppender
       val console = new ConsoleAppender(new Formatter)
-      console.setThreshold(config.console.level)
+      console.setThreshold(config.console.threshold)
       appender.addAppender(console)
       root.addAppender(appender)
     }
@@ -148,7 +154,7 @@ object Logging {
       rollingLog.setLayout(formatter)
       rollingLog.setRollingPolicy(policy)
       rollingLog.activateOptions()
-      rollingLog.setThreshold(config.file.level)
+      rollingLog.setThreshold(config.file.threshold)
 
       val appender = new AsyncAppender
       appender.addAppender(rollingLog)

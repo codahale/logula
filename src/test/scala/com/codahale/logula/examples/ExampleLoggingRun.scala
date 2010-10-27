@@ -37,14 +37,16 @@ object ExampleLoggingRun extends Logging {
     Logging.configure { log =>
       log.registerWithJMX = true
 
+      log.level = Level.TRACE
+
       log.loggers("com.codahale.logula.examples.SilencedRunner") = Level.OFF
 
       log.console.enabled = true
-      log.console.level = Level.ALL
+      log.console.threshold = Level.ALL
 
       log.file.enabled = true
       log.file.filenamePattern = "./logs/%d{yyyy-MM-dd}.log.gz"
-      log.file.level = Level.INFO
+      log.file.threshold = Level.INFO
 
       log.gc.enabled = true
       log.gc.checkEvery(1, TimeUnit.SECONDS)
