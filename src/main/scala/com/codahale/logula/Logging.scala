@@ -72,7 +72,7 @@ object Logging {
      * Whether or not logged statements should be output to a file.
      * Defaults to  {@code false}.
      */
-    var enabled = true
+    var enabled = false
 
     /**
      * The minimum logging level which will be written to the file.
