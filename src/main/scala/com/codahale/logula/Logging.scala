@@ -159,7 +159,7 @@ object Logging {
       val logger = Logger.getLogger("GC")
       e.scheduleAtFixedRate(
         new GCMonitor(logger, config.gc.minDurations.toSeq),
-        0, config.gc.interval._1, config.gc.interval._2
+        0, config.gc.interval, TimeUnit.MILLISECONDS
       )
     }
 
