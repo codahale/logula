@@ -16,6 +16,7 @@ Requirements
 * Java SE 6
 * Scala 2.8.0
 * log4j 1.2
+* log4j-extras 1.0
 
 
 How To Use
@@ -31,23 +32,21 @@ download them as transitive dependencies.
 
 **Second**, configure the logging system:
 
-You can log all messages to `stdout`:
-
     import com.codahale.logula.Logging
     import org.apache.log4j.Level
     
     Logging.configure { log =>
       log.registerWithJMX = true
-
+      
+      log.level = Level.INFO
       log.loggers("com.myproject.weebits") = Level.OFF
-
+      
       log.console.enabled = true
-      log.console.level = Level.ALL
-
+      log.console.threshold = Level.WARN
+      
       log.file.enabled = true
       log.file.filenamePattern = "/var/log/myapp/%d{yyyy-MM-dd}.log.gz"
-      log.file.level = Level.INFO
-
+      
       log.gc.enabled = true
       log.gc.checkEvery(1, TimeUnit.SECONDS)
       log.gc.addDurationThreshold(Level.DEBUG,    0, TimeUnit.MILLISECONDS)
@@ -165,11 +164,11 @@ A few items of note:
   * All timestamps are in UTC and ISO 8601 format. This really should be OK with
     you.
   * You can grep for messages of a specific level really easily:
-    `tail -f logula.log | grep "^WARN"`
+    `tail -f logula.log | grep '^WARN'`
   * You can grep for messages from a specific class or package really easily:
-    `tail -f logula.log | grep "ThingDoer"`
+    `tail -f logula.log | grep 'ThingDoer'`
   * You can even pull out full exception stack traces, plus the accompanying
-    log message: `tail -f logula.log | grep -B 1 "^\!"`
+    log message: `tail -f logula.log | grep -B 1 '^\!'`
   * If you squint, you can still make out the actual log messages.
 
 License
