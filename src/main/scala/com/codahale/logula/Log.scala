@@ -18,17 +18,22 @@ object Log {
    */
   def forClass(klass: Class[_]) = new Log(Logger.getLogger(klass))
 
+  /**
+   * Returns a log with the given name.
+   */
+  def forName(name: String) = new Log(Logger.getLogger(name))
+
   protected val CallerFQCN = classOf[Log].getCanonicalName
 }
 
 /**
- * In general, use the Logging trait rather than using Log directly.
+ * <b>In general, use the Logging trait rather than using Log directly.</b>
  *
  * A wrapper for org.apache.log4j which allows for a smoother interaction with
  * Scala classes. All messages are treated as format strings:
- *
+ * <pre>
  *    log.info("We have this many threads: %d", thread.size)
- *
+ * </pre>
  * Each log level has two methods: one for logging regular messages, the other
  * for logging messages with thrown exceptions.
  *
