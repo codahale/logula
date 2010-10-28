@@ -1,0 +1,7 @@
+Brand new version! Featuring:
+
+* Moved from `java.util.logging` to **log4j**
+* Improved `Log` interface
+* Change logging levels via JMX
+* Log to stdout or a rotating log file
+* Log garbage collection times
