@@ -6,6 +6,9 @@ class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with poster
   val sourceArtifact = sbt.Artifact(artifactID, "src", "jar", Some("sources"), Nil, None)
   override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
 
+  override def compileOptions = super.compileOptions ++
+    Seq(Deprecation, ExplainTypes, Unchecked)
+
   /**
    * Publish via rsync.
    */
@@ -14,7 +17,10 @@ class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with poster
   /**
    * Dependencies
    */
-  val scalaToolsSnapshots = "scala-tools.org Snapshots" at "http://scala-tools.org/repo-snapshots"
-  val scalaTest = "org.scalatest" % "scalatest" % "1.2-for-scala-2.8.0.final-SNAPSHOT" % "test" withSources() intransitive()
-  val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test" withSources()
+  val log4j = "log4j" % "log4j" % "1.2.16" withSources() intransitive()
+  val log4jExtras = "log4j" % "apache-log4j-extras" % "1.0" withSources() intransitive()
+
+  val specs = "org.scala-tools.testing" %% "specs" % "1.6.5" % "test" withSources ()
+  val simplespec = "com.codahale" %% "simplespec" % "0.2.0-SNAPSHOT" % "test" withSources ()
+  val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test" withSources ()
 }
