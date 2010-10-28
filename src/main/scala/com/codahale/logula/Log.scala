@@ -1,6 +1,7 @@
 package com.codahale.logula
 
 import org.apache.log4j.{Level, Logger}
+import reflect.NameTransformer
 
 /**
  * Log's companion object.
@@ -9,19 +10,23 @@ object Log {
   /**
    * Returns a log for a given class.
    */
-  def forClass[A](implicit mf: Manifest[A]): Log = {
-    new Log(Logger.getLogger(mf.erasure))
-  }
+  def forClass[A](implicit mf: Manifest[A]) = forName(mf.erasure.getCanonicalName)
 
   /**
    * Returns a log for a given class.
    */
-  def forClass(klass: Class[_]) = new Log(Logger.getLogger(klass))
+  def forClass(klass: Class[_]) = forName(klass.getCanonicalName)
 
   /**
    * Returns a log with the given name.
    */
-  def forName(name: String) = new Log(Logger.getLogger(name))
+  def forName(name: String) = new Log(Logger.getLogger(clean(name)))
+
+  private def clean(s: String) = NameTransformer.decode(if (s.endsWith("$")) {
+    s.substring(0, s.length - 1)
+  } else {
+    s
+  }.replaceAll("\\$", "."))
 
   protected val CallerFQCN = classOf[Log].getCanonicalName
 }
