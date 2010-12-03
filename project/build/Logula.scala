@@ -1,4 +1,4 @@
-class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with posterous.Publish with rsync.RsyncPublishing {
+class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with IdeaProject with posterous.Publish with rsync.RsyncPublishing {
   /**
    * Publish the source as well as the class files.
    */
