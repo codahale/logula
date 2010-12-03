@@ -20,7 +20,7 @@ class Logula(info: sbt.ProjectInfo) extends sbt.DefaultProject(info) with poster
   val log4j = "log4j" % "log4j" % "1.2.16" withSources() intransitive()
   val log4jExtras = "log4j" % "apache-log4j-extras" % "1.0" withSources() intransitive()
 
-  val specs = "org.scala-tools.testing" %% "specs" % "1.6.5" % "test" withSources ()
-  val simplespec = "com.codahale" %% "simplespec" % "0.2.0-SNAPSHOT" % "test" withSources ()
+  val specs = "org.scala-tools.testing" %% "specs" % "1.6.6" % "test" withSources ()
+  val simplespec = "com.codahale" %% "simplespec" % "0.2.0" % "test" withSources ()
   val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test" withSources ()
 }
