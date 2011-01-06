@@ -1,10 +1,9 @@
 package com.codahale.logula
 
 import scala.collection.mutable
-import org.apache.log4j.rolling.{TimeBasedRollingPolicy, RollingFileAppender}
 import management.ManagementFactory
 import javax.management.{InstanceAlreadyExistsException, ObjectName}
-import org.apache.log4j.{Level, Logger, ConsoleAppender, AsyncAppender}
+import org.apache.log4j.{Level, Logger, ConsoleAppender, AsyncAppender, RollingFileAppender}
 
 /**
  * A singleton class for configuring logging in a JVM process.
@@ -36,11 +35,19 @@ object Logging {
     var threshold = Level.ALL
 
     /**
-     * The log filename pattern.
-     *
-     * See  { @link org.apache.log4j.rolling.TimeBasedRollingPolicy } for details.
+     * The log filename.
      */
-    var filenamePattern = ""
+    var filename = ""
+
+    /**
+     * The maximum log file in kilobytes, before it's rolled over.
+     */
+    var maxSize = 10 * 1024 //10MB
+
+    /**
+     * The number of old log files to retain.
+     */
+    var retainedFiles = 5
   }
 
   class LoggingConfig {
@@ -97,13 +104,12 @@ object Logging {
     if (config.file.enabled) {
       val formatter = new Formatter
 
-      val policy = new TimeBasedRollingPolicy
-      policy.setFileNamePattern(config.file.filenamePattern)
-      policy.activateOptions()
-
       val rollingLog = new RollingFileAppender()
       rollingLog.setLayout(formatter)
-      rollingLog.setRollingPolicy(policy)
+      rollingLog.setAppend(true)
+      rollingLog.setFile(config.file.filename)
+      rollingLog.setMaximumFileSize(config.file.maxSize * 1024)
+      rollingLog.setMaxBackupIndex(config.file.retainedFiles)
       rollingLog.activateOptions()
       rollingLog.setThreshold(config.file.threshold)
 

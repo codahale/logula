@@ -21,8 +21,7 @@ class Logula(info: ProjectInfo) extends DefaultProject(info) with IdeaProject wi
    * Dependencies
    */
   val log4j = "log4j" % "log4j" % "1.2.16"
-  val log4jExtras = "log4j" % "apache-log4j-extras" % "1.0"
-
+  
   val specs = "org.scala-tools.testing" %% "specs" % "1.6.6" % "test"
   val simplespec = "com.codahale" %% "simplespec" % "0.2.0" % "test"
   val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"

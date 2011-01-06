@@ -15,7 +15,7 @@ class ThingDoer extends Logging {
     } catch {
       case e: Exception => log.error(e, "The thing has gone horribly wrong.")
     }
-    
+
     log.fatal("Just kidding!")
   }
 }
@@ -44,8 +44,8 @@ object ExampleLoggingRun extends Logging {
       log.console.threshold = Level.ALL
 
       log.file.enabled = true
-      log.file.filenamePattern = "./logs/%d{yyyy-MM-dd}.log.gz"
-      log.file.threshold = Level.INFO
+      log.file.filename = "./logs/example-logging-run.log"
+      log.file.threshold = Level.ALL
     }
 
     new ThingDoer().run()
