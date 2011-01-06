@@ -2,7 +2,6 @@ package com.codahale.logula.examples
 
 import com.codahale.logula.Logging
 import org.apache.log4j.Level
-import java.util.concurrent.TimeUnit
 
 class ThingDoer extends Logging {
   def run() {
@@ -47,20 +46,9 @@ object ExampleLoggingRun extends Logging {
       log.file.enabled = true
       log.file.filenamePattern = "./logs/%d{yyyy-MM-dd}.log.gz"
       log.file.threshold = Level.INFO
-
-      log.gc.enabled = true
-      log.gc.checkEvery(1, TimeUnit.SECONDS)
-      log.gc.addDurationThreshold(Level.DEBUG,    0, TimeUnit.MILLISECONDS)
-      log.gc.addDurationThreshold(Level.INFO,   300, TimeUnit.MILLISECONDS)
-      log.gc.addDurationThreshold(Level.WARN,  1000, TimeUnit.MILLISECONDS)
     }
 
     new ThingDoer().run()
     new SilencedRunner().run()
-
-    log.info("Generating some garbage")
-    for (i <- 1 to 10000) {
-      (1 to i).toList.toSet.toList
-    }
   }
 }
