@@ -1,6 +1,8 @@
 import sbt._
 
-class Logula(info: ProjectInfo) extends DefaultProject(info) with IdeaProject with posterous.Publish with maven.MavenDependencies {
+class Logula(info: ProjectInfo) extends DefaultProject(info)
+                                        with IdeaProject
+                                        with maven.MavenDependencies {
   /**
    * Publish the source as well as the class files.
    */
@@ -22,7 +24,6 @@ class Logula(info: ProjectInfo) extends DefaultProject(info) with IdeaProject wi
    */
   val log4j = "log4j" % "log4j" % "1.2.16"
   
-  val specs = "org.scala-tools.testing" %% "specs" % "1.6.6" % "test"
   val simplespec = "com.codahale" %% "simplespec" % "0.2.0" % "test"
   val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"
 }
