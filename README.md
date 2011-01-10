@@ -14,9 +14,8 @@ Requirements
 ------------
 
 * Java SE 6
-* Scala 2.8.0
+* Scala 2.8.1
 * log4j 1.2
-* log4j-extras 1.0
 
 
 How To Use
@@ -25,10 +24,10 @@ How To Use
 **First**, specify Logula as a dependency:
 
     val codaRepo = "Coda Hale's Repository" at "http://repo.codahale.com/"
-    val logula = "com.codahale" %% "logula" % "2.0.0-SNAPSHOT" withSources()
+    val logula = "com.codahale" %% "logula" % "2.1.0" withSources()
 
-You will also need a modern version of log4j and log4j-extras. SBT should
-download them as transitive dependencies.
+You will also need a modern version of log4j. SBT should download them as 
+transitive dependencies.
 
 **Second**, configure the logging system:
 
@@ -45,34 +44,10 @@ download them as transitive dependencies.
       log.console.threshold = Level.WARN
       
       log.file.enabled = true
-      log.file.filenamePattern = "/var/log/myapp/%d{yyyy-MM-dd}.log.gz"
-      
-      log.gc.enabled = true
-      log.gc.checkEvery(1, TimeUnit.SECONDS)
-      log.gc.addDurationThreshold(Level.DEBUG,    0, TimeUnit.MILLISECONDS)
-      log.gc.addDurationThreshold(Level.INFO,   300, TimeUnit.MILLISECONDS)
-      log.gc.addDurationThreshold(Level.WARN,  1000, TimeUnit.MILLISECONDS)
+      log.file.filename = "/var/log/myapp/myapp.log"
+      log.file.maxSize = 10 * 1024 // KB
+      log.file.retainedFiles = 5 // keep five old logs around
     }
-
-This will log all messages on Oct 24, 2010 to both standard out and
-`/var/log/myapp/2010-10-24.log`, and when the server rolls over to a new log,
-the old log will be gzipped. (You can also use ZIP compression by making the
-filename pattern end in `.zip` or disable compression entirely by not naming
-your log files `.gz` or `.zip`.)
-
-The `%d{yyyy-MM-dd}` format documentation can be found by looking at
-`java.util.SimpleDateFormat`.
-
-If `log.gc.enabled` is `true`, Logula will log information about the JVM's
-garbage collection:
-    
-    DEBUG [2010-10-25 22:08:24,534] GC: ParNew: 0.014s, 15.92MB reclaimed -> 25.15MB/811.88MB used
-    DEBUG [2010-10-25 22:08:24,542] GC: ConcurrentMarkSweep: 0.096s, 1.99MB reclaimed -> 23.44MB/811.88MB used
-    DEBUG [2010-10-25 22:08:25,428] GC: ParNew: 0.002s, 16.64MB reclaimed -> 28.05MB/811.88MB used
-
-You can specify thresholds at which GC runs are logged at particular levels. By
-default, Logula logs all GC runs which take 0ms to 99ms at `TRACE`, 100ms to
-499ms at `DEBUG`, 500ms to 999ms at `INFO`, and ≥1000ms at `WARN`.
 
 **Third**, add some logging to your classes:
     
@@ -174,6 +149,6 @@ A few items of note:
 License
 -------
 
-Copyright (c) 2010 Coda Hale
+Copyright (c) 2010-2011 Coda Hale
 
 Published under The MIT License, see LICENSE

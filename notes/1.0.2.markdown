@@ -1,5 +1,0 @@
-Patch release:
-
-* Now cross-compiled against Scala 2.8.0.RC3, RC5, RC6, and RC7.
-* Also strips tab characters from exception stack traces so as to play nicely
-  with syslog.
