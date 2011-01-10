@@ -24,7 +24,7 @@ How To Use
 **First**, specify Logula as a dependency:
 
     val codaRepo = "Coda Hale's Repository" at "http://repo.codahale.com/"
-    val logula = "com.codahale" %% "logula" % "2.1.0-SNAPSHOT" withSources()
+    val logula = "com.codahale" %% "logula" % "2.1.0" withSources()
 
 You will also need a modern version of log4j. SBT should download them as 
 transitive dependencies.
@@ -149,6 +149,6 @@ A few items of note:
 License
 -------
 
-Copyright (c) 2010 Coda Hale
+Copyright (c) 2010-2011 Coda Hale
 
 Published under The MIT License, see LICENSE
