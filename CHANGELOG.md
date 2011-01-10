@@ -1,4 +1,4 @@
-v2.1.0: TBD
+v2.1.0: Jan 09 2011
 ===================
 
 * Removed garbage collection logging
