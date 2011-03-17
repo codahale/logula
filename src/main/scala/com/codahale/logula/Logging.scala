@@ -3,7 +3,8 @@ package com.codahale.logula
 import scala.collection.mutable
 import management.ManagementFactory
 import javax.management.{InstanceAlreadyExistsException, ObjectName}
-import org.apache.log4j.{Level, Logger, ConsoleAppender, AsyncAppender, RollingFileAppender}
+import org.apache.log4j.net.SyslogAppender
+import org.apache.log4j._
 
 /**
  * A singleton class for configuring logging in a JVM process.
@@ -50,6 +51,24 @@ object Logging {
     var retainedFiles = 5
   }
 
+  class LoggingSyslogConfig {
+    /**
+     * Whether or not logged statements should be output to syslog.
+     * Defaults to  {@code false}.
+     */
+    var enabled = false
+
+    /**
+     * The syslog host.
+     */
+    var host = "localhost"
+
+    /**
+     * The syslog facility.
+     */
+    var facility = "local0"
+  }
+
   class LoggingConfig {
     /**
      * Console logging configuration.
@@ -60,6 +79,11 @@ object Logging {
      * File logging configuration.
      */
     val file = new LoggingFileConfig
+
+    /**
+     * Syslog logging configuration.
+     */
+    val syslog = new LoggingSyslogConfig
 
     /**
      * A map of logger names to default levels.
@@ -93,19 +117,18 @@ object Logging {
       Logger.getLogger(name).setLevel(level)
     }
 
+    val appender = new AsyncAppender
+    root.addAppender(appender)
+
     if (config.console.enabled) {
-      val appender = new AsyncAppender
       val console = new ConsoleAppender(new Formatter)
       console.setThreshold(config.console.threshold)
       appender.addAppender(console)
-      root.addAppender(appender)
     }
 
     if (config.file.enabled) {
-      val formatter = new Formatter
-
       val rollingLog = new RollingFileAppender()
-      rollingLog.setLayout(formatter)
+      rollingLog.setLayout(new Formatter)
       rollingLog.setAppend(true)
       rollingLog.setFile(config.file.filename)
       rollingLog.setMaximumFileSize(config.file.maxSize * 1024)
@@ -113,9 +136,13 @@ object Logging {
       rollingLog.activateOptions()
       rollingLog.setThreshold(config.file.threshold)
 
-      val appender = new AsyncAppender
       appender.addAppender(rollingLog)
-      root.addAppender(appender)
+    }
+
+    if (config.syslog.enabled) {
+      val layout = new PatternLayout("%c: %m")
+      val syslog = new SyslogAppender(layout, "localhost", SyslogAppender.getFacility("local2"))
+      appender.addAppender(syslog)
     }
 
     if (config.registerWithJMX) {

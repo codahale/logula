@@ -46,6 +46,10 @@ object ExampleLoggingRun extends Logging {
       log.file.enabled = true
       log.file.filename = "./logs/example-logging-run.log"
       log.file.threshold = Level.ALL
+
+      log.syslog.enabled = true
+      log.syslog.host = "localhost"
+      log.syslog.facility = "LOCAL7"
     }
 
     new ThingDoer().run()
