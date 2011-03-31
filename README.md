@@ -24,7 +24,7 @@ How To Use
 **First**, specify Logula as a dependency:
 
     val codaRepo = "Coda Hale's Repository" at "http://repo.codahale.com/"
-    val logula = "com.codahale" %% "logula" % "2.1.0" withSources()
+    val logula = "com.codahale" %% "logula" % "2.1.1" withSources()
 
 You will also need a modern version of log4j. SBT should download them as 
 transitive dependencies.
@@ -47,6 +47,11 @@ transitive dependencies.
       log.file.filename = "/var/log/myapp/myapp.log"
       log.file.maxSize = 10 * 1024 // KB
       log.file.retainedFiles = 5 // keep five old logs around
+
+      // syslog integration is always via a network socket
+      log.syslog.enabled = true
+      log.syslog.host = "syslog-001.internal.example.com"
+      log.syslog.facility = "local3"
     }
 
 **Third**, add some logging to your classes:
