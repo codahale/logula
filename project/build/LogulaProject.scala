@@ -28,6 +28,7 @@ class LogulaProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Test Dependencies
    */
-  val simplespec = "com.codahale" %% "simplespec" % "0.2.0" % "test"
-  val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"
+  val simplespec = "com.codahale" %% "simplespec" % "0.3.1-SNAPSHOT" % "test"
+  def specs2Framework = new TestFramework("org.specs2.runner.SpecsFramework")
+  override def testFrameworks = super.testFrameworks ++ Seq(specs2Framework)
 }
