@@ -1,7 +1,7 @@
 import sbt._
 import maven._
 
-class Logula(info: ProjectInfo) extends DefaultProject(info)
+class LogulaProject(info: ProjectInfo) extends DefaultProject(info)
                                         with IdeaProject
                                         with MavenDependencies {
   /**
