@@ -1,7 +1,7 @@
 import sbt._
 import maven._
 
-class Logula(info: ProjectInfo) extends DefaultProject(info)
+class LogulaProject(info: ProjectInfo) extends DefaultProject(info)
                                         with IdeaProject
                                         with MavenDependencies {
   /**
@@ -28,6 +28,7 @@ class Logula(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Test Dependencies
    */
-  val simplespec = "com.codahale" %% "simplespec" % "0.2.0" % "test"
-  val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"
+  val simplespec = "com.codahale" %% "simplespec" % "0.3.2" % "test"
+  def specs2Framework = new TestFramework("org.specs2.runner.SpecsFramework")
+  override def testFrameworks = super.testFrameworks ++ Seq(specs2Framework)
 }

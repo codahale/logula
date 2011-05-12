@@ -14,7 +14,7 @@ Requirements
 ------------
 
 * Java SE 6
-* Scala 2.8.1
+* Scala 2.8.1 or 2.9.0
 * log4j 1.2
 
 
@@ -24,7 +24,7 @@ How To Use
 **First**, specify Logula as a dependency:
 
     val codaRepo = "Coda Hale's Repository" at "http://repo.codahale.com/"
-    val logula = "com.codahale" %% "logula" % "2.1.1" withSources()
+    val logula = "com.codahale" %% "logula" % "2.1.2"
 
 You will also need a modern version of log4j. SBT should download them as 
 transitive dependencies.

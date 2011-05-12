@@ -103,9 +103,16 @@ object Logging {
   }
 
   /**
+   * Configure Logula using all defaults
+   */
+  def configure() {
+    configure { _ => }
+  }
+
+  /**
    * Configure Logula.
    */
-  def configure(f: LoggingConfig => Unit) {
+  def configure(f: LoggingConfig => Any) {
     val config = new LoggingConfig
     f(config)
 
