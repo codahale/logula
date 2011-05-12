@@ -1,5 +1,12 @@
+v2.1.2: May 12 2011
+===================
+
+* Added a no-param `configure` method for the very unpicky.
+* Now cross-building for Scala 2.8.1 and 2.9.0.
+
 v2.1.1: Mar 30 2011
 ===================
+
 * Added syslog logging
 
 v2.1.0: Jan 09 2011
