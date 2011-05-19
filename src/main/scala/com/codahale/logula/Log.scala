@@ -165,7 +165,8 @@ class Log(private val logger: Logger) {
 
   private def log(level: Level, thrown: Option[Throwable], message: String, values: Seq[Any]) = {
     if (logger.isEnabledFor(level)) {
-      logger.log(CallerFQCN, level, message.format(values: _*), thrown.orNull)
+      val statement = if (values.isEmpty) message else message.format(values:_*)
+      logger.log(CallerFQCN, level, statement, thrown.orNull)
     }
   }
 }
