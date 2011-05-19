@@ -149,7 +149,9 @@ class Log(private val logger: Logger) {
   /**
    * Sets the log's current level.
    */
-  def level_=(level: Level) = logger.setLevel(level)
+  def level_=(level: Level) {
+    logger.setLevel(level)
+  }
 
   def isTraceEnabled = logger.isEnabledFor(Level.TRACE)
 
@@ -163,7 +165,7 @@ class Log(private val logger: Logger) {
 
   def isFatalEnabled = logger.isEnabledFor(Level.FATAL)
 
-  private def log(level: Level, thrown: Option[Throwable], message: String, values: Seq[Any]) = {
+  private def log(level: Level, thrown: Option[Throwable], message: String, values: Seq[Any]) {
     if (logger.isEnabledFor(level)) {
       val statement = if (values.isEmpty) message else message.format(values:_*)
       logger.log(CallerFQCN, level, statement, thrown.orNull)
