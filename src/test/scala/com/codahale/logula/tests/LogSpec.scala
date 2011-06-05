@@ -20,7 +20,7 @@ class LogExample(log: Log) {
   def doFatal(t: Throwable) { log.fatal(t, "One, two, %d", 3) }
 }
 
-object LogSpec extends Spec with Mockito {
+class LogSpec extends Spec with Mockito {
   @ignore
   abstract class Context(levels: Level*) {
     protected val logger = mock[Logger]

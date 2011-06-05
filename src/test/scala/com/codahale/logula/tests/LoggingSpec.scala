@@ -7,7 +7,7 @@ class LoggingExample extends Logging {
   def getLog = log
 }
 
-object LoggingSpec extends Spec {
+class LoggingSpec extends Spec {
   class `A class which extends Logging` {
     private val example = new LoggingExample
 
