@@ -35,7 +35,7 @@ How To Use
   <dependency>
     <groupId>com.codahale</groupId>
     <artifactId>logula_${scala.version}</artifactId>
-    <version>2.1.3-SNAPSHOT</version>
+    <version>2.1.3</version>
   </dependency>
 </dependencies>
 ```
@@ -100,19 +100,25 @@ semantics (e.g., `f: => A`) for its logging statements, which means two things:
    regardless of whether or not the statement is logged.
 
 For example:
-    
-    log.debug("A huge collection: %s", things.mkString(", "))
+
+```scala
+log.debug("A huge collection: %s", things.mkString(", "))
+```
 
 The `mkString` call will happen every time. To prevent this, either keep your
 arguments simple:
-    
-    log.debug("A huge collection: %s", things)
+
+```scala
+log.debug("A huge collection: %s", things)
+```
 
 or only conditionally log them:
-    
-    if (log.isDebugEnabled) {
-      log.debug("A huge collection: %s", things.mkString(", "))
-    }
+
+```scala
+if (log.isDebugEnabled) {
+  log.debug("A huge collection: %s", things.mkString(", "))
+}
+```
 
 In most cases, it's simple enough to just log basic values.
 
