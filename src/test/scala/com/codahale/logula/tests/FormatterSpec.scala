@@ -5,7 +5,7 @@ import com.codahale.logula.Formatter
 import org.apache.log4j.{Level, Logger}
 import org.apache.log4j.spi.LoggingEvent
 
-object FormatterSpec extends Spec {
+class FormatterSpec extends Spec {
   class `Logula's formatter` {
     private val formatter = new Formatter
 

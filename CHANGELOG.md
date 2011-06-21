@@ -1,3 +1,9 @@
+v2.1.3: Jun 20 2011
+===================
+
+* No longer formatting the log message if there aren't any parameters.
+* Now cross-building for Scala 2.8.1 and 2.9.0-1 only.
+
 v2.1.2: May 12 2011
 ===================
 

@@ -14,7 +14,7 @@ Requirements
 ------------
 
 * Java SE 6
-* Scala 2.8.1 or 2.9.0
+* Scala 2.8.1 or 2.9.0-1
 * log4j 1.2
 
 
@@ -23,50 +23,65 @@ How To Use
 
 **First**, specify Logula as a dependency:
 
-    val codaRepo = "Coda Hale's Repository" at "http://repo.codahale.com/"
-    val logula = "com.codahale" %% "logula" % "2.1.2"
+```xml
+<repositories>
+  <repository>
+    <id>repo.codahale.com</id>
+    <url>http://repo.codahale.com</url>
+  </repository>
+</repositories>
 
-You will also need a modern version of log4j. SBT should download them as 
-transitive dependencies.
+<dependencies>
+  <dependency>
+    <groupId>com.codahale</groupId>
+    <artifactId>logula_${scala.version}</artifactId>
+    <version>2.1.3</version>
+  </dependency>
+</dependencies>
+```
 
 **Second**, configure the logging system:
 
-    import com.codahale.logula.Logging
-    import org.apache.log4j.Level
-    
-    Logging.configure { log =>
-      log.registerWithJMX = true
-      
-      log.level = Level.INFO
-      log.loggers("com.myproject.weebits") = Level.OFF
-      
-      log.console.enabled = true
-      log.console.threshold = Level.WARN
-      
-      log.file.enabled = true
-      log.file.filename = "/var/log/myapp/myapp.log"
-      log.file.maxSize = 10 * 1024 // KB
-      log.file.retainedFiles = 5 // keep five old logs around
+```scala
+import com.codahale.logula.Logging
+import org.apache.log4j.Level
 
-      // syslog integration is always via a network socket
-      log.syslog.enabled = true
-      log.syslog.host = "syslog-001.internal.example.com"
-      log.syslog.facility = "local3"
-    }
+Logging.configure { log =>
+  log.registerWithJMX = true
+
+  log.level = Level.INFO
+  log.loggers("com.myproject.weebits") = Level.OFF
+
+  log.console.enabled = true
+  log.console.threshold = Level.WARN
+
+  log.file.enabled = true
+  log.file.filename = "/var/log/myapp/myapp.log"
+  log.file.maxSize = 10 * 1024 // KB
+  log.file.retainedFiles = 5 // keep five old logs around
+
+  // syslog integration is always via a network socket
+  log.syslog.enabled = true
+  log.syslog.host = "syslog-001.internal.example.com"
+  log.syslog.facility = "local3"
+}
+```
 
 **Third**, add some logging to your classes:
-    
-    class MyThing extends Logging {
-      def complicatedManoeuvre() {
-        try {
-          log.warn("This is about to get complicated...")
-          log.info("Trying to do %d backflips", backflipsToAttempt)
-          // complicated bit elided
-        } catch {
-          case e: Exception => log.error(e, "Horrible things have happened.")
-        }
-      }
+
+```scala
+class MyThing extends Logging {
+  def complicatedManoeuvre() {
+    try {
+      log.warn("This is about to get complicated...")
+      log.info("Trying to do %d backflips", backflipsToAttempt)
+      // complicated bit elided
+    } catch {
+      case e: Exception => log.error(e, "Horrible things have happened.")
     }
+  }
+}
+```
 
 Notice that the logging statements use Scala's formatting syntax, and that
 logged exceptions are passed as the first argument.
@@ -85,19 +100,25 @@ semantics (e.g., `f: => A`) for its logging statements, which means two things:
    regardless of whether or not the statement is logged.
 
 For example:
-    
-    log.debug("A huge collection: %s", things.mkString(", "))
+
+```scala
+log.debug("A huge collection: %s", things.mkString(", "))
+```
 
 The `mkString` call will happen every time. To prevent this, either keep your
 arguments simple:
-    
-    log.debug("A huge collection: %s", things)
+
+```scala
+log.debug("A huge collection: %s", things)
+```
 
 or only conditionally log them:
-    
-    if (log.isDebugEnabled) {
-      log.debug("A huge collection: %s", things.mkString(", "))
-    }
+
+```scala
+if (log.isDebugEnabled) {
+  log.debug("A huge collection: %s", things.mkString(", "))
+}
+```
 
 In most cases, it's simple enough to just log basic values.
 
@@ -150,6 +171,7 @@ A few items of note:
   * You can even pull out full exception stack traces, plus the accompanying
     log message: `tail -f logula.log | grep -B 1 '^\!'`
   * If you squint, you can still make out the actual log messages.
+
 
 License
 -------
