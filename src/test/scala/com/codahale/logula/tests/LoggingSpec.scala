@@ -2,6 +2,7 @@ package com.codahale.logula.tests
 
 import com.codahale.simplespec.Spec
 import com.codahale.logula.{Log, Logging}
+import org.junit.Test
 
 class LoggingExample extends Logging {
   def getLog = log
@@ -9,10 +10,10 @@ class LoggingExample extends Logging {
 
 class LoggingSpec extends Spec {
   class `A class which extends Logging` {
-    private val example = new LoggingExample
+    val example = new LoggingExample
 
-    def `has a Log instance` = {
-      example.getLog must haveClass[Log]
+    @Test def `has a Log instance` = {
+      example.getLog.must(beA[Log])
     }
   }
 }
