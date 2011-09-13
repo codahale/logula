@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.codahale</groupId>
-    <artifactId>logula_2.9.0-1</artifactId>
+    <artifactId>logula_2.9.1</artifactId>
     <version>2.1.4-SNAPSHOT</version>
     <name>Logula for Scala ${scala.version}</name>
 
     <properties>
-        <scala.version>2.9.0-1</scala.version>
+        <scala.version>2.9.1</scala.version>
     </properties>
 
     <developers>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.3.4</version>
+            <version>0.5.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
