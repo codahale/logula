@@ -148,7 +148,7 @@ object Logging {
 
     if (config.syslog.enabled) {
       val layout = new PatternLayout("%c: %m")
-      val syslog = new SyslogAppender(layout, "localhost", SyslogAppender.getFacility("local2"))
+      val syslog = new SyslogAppender(layout, "localhost", SyslogAppender.getFacility(config.syslog.facility))
       appender.addAppender(syslog)
     }
 
