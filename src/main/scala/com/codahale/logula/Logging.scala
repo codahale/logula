@@ -59,6 +59,11 @@ object Logging {
     var enabled = false
 
     /**
+     * The minimum logging level which will be written to syslog.
+     */
+    var threshold = Level.ALL
+
+    /**
      * The syslog host.
      */
     var host = "localhost"
@@ -67,6 +72,11 @@ object Logging {
      * The syslog facility.
      */
     var facility = "local0"
+
+    /**
+     * The syslog pattern.
+     */
+    var pattern = "%c: %m"
   }
 
   class LoggingConfig {
@@ -147,8 +157,9 @@ object Logging {
     }
 
     if (config.syslog.enabled) {
-      val layout = new PatternLayout("%c: %m")
-      val syslog = new SyslogAppender(layout, "localhost", SyslogAppender.getFacility(config.syslog.facility))
+      val layout = new PatternLayout(config.syslog.pattern)
+      val syslog = new SyslogAppender(layout, config.syslog.host, SyslogAppender.getFacility(config.syslog.facility))
+      syslog.setThreshold(config.syslog.threshold)
       appender.addAppender(syslog)
     }
 
