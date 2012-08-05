@@ -21,6 +21,12 @@ object Logging {
      * The minimum logging level which will be written to console.
      */
     var threshold = Level.ALL
+
+    
+    /**
+     * Default formatter for Console logger
+     */
+    var formatter:BaseFormatter = new Formatter
   }
 
   class LoggingFileConfig {
@@ -49,6 +55,11 @@ object Logging {
      * The number of old log files to retain.
      */
     var retainedFiles = 5
+
+    /**
+     * Default formatter
+     */
+    var formatter:BaseFormatter = new Formatter
   }
 
   class LoggingSyslogConfig {
@@ -138,14 +149,14 @@ object Logging {
     root.addAppender(appender)
 
     if (config.console.enabled) {
-      val console = new ConsoleAppender(new Formatter)
+      val console = new ConsoleAppender(config.console.formatter)
       console.setThreshold(config.console.threshold)
       appender.addAppender(console)
     }
 
     if (config.file.enabled) {
       val rollingLog = new RollingFileAppender()
-      rollingLog.setLayout(new Formatter)
+      rollingLog.setLayout(config.file.formatter)
       rollingLog.setAppend(true)
       rollingLog.setFile(config.file.filename)
       rollingLog.setMaximumFileSize(config.file.maxSize * 1024)
